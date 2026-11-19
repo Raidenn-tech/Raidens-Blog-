@@ -1,128 +1,80 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Raidens Blog</title>
-
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: #101010;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-header {
-  padding: 22px;
-  background: #191919;
-  border-bottom: 2px solid #e21b23;
-  font-size: 23px;
-  font-weight: bold;
-}
-
-header span {
-  color: #ed2929;
-}
-
-main {
-  max-width: 750px;
-  margin: auto;
-  padding: 25px 18px;
-}
-
-.hero {
-  padding: 40px 20px;
-  text-align: center;
-  border-radius: 15px;
-  background: linear-gradient(135deg,#501313,#171717);
-  border: 1px solid #702020;
-}
-
-h1 {
-  font-size: 30px;
-}
-
-p {
-  color: #bbb;
-  line-height: 1.6;
-}
-
-.card {
-  background: #1d1d1d;
-  padding: 20px;
-  margin-top: 15px;
-  border-radius: 12px;
-  border: 1px solid #393939;
-}
-
-button {
-  background: #df2028;
-  color: white;
-  border: 0;
-  border-radius: 8px;
-  padding: 13px 20px;
-  font-weight: bold;
-}
-
-footer {
-  text-align: center;
-  padding: 30px;
-  color: #777;
-}
+*{box-sizing:border-box}
+body{margin:0;background:#101010;color:white;font-family:Arial,sans-serif}
+header{padding:22px;background:#191919;border-bottom:2px solid #e21b23;font-size:23px;font-weight:bold}
+header span{color:#ed2929}
+main{max-width:750px;margin:auto;padding:25px 18px}
+.hero{text-align:center;padding:40px 20px;border-radius:15px;background:linear-gradient(135deg,#501313,#171717);border:1px solid #702020}
+h1{font-size:30px}
+p{color:#bbb;line-height:1.6}
+.card{background:#1d1d1d;padding:20px;margin-top:15px;border-radius:12px;border:1px solid #393939}
+button{background:#df2028;color:white;border:0;border-radius:8px;padding:13px 20px;font-weight:bold;cursor:pointer}
+button:disabled{background:#555;cursor:not-allowed}
+footer{text-align:center;padding:30px;color:#777}
+#status{margin-top:15px}
 </style>
 </head>
-
 <body>
-
-<header>
-  RAIDENS <span>BLOG</span>
-</header>
-
+<header>RAIDENS <span>BLOG</span></header>
 <main>
-
 <section class="hero">
-  <h1>YOUR DIGITAL FILE CENTER</h1>
-  <p>
-    Selamat datang di Raidens Blog.
-    Temukan koleksi file digital favoritmu.
-  </p>
-
-  <button onclick="window.open('https://youtube.com/@dkaahmdy','_blank')">
-    SUBSCRIBE YOUTUBE
-  </button>
+<h1>YOUR DIGITAL FILE CENTER</h1>
+<p>Selamat datang di Raidens Blog. Temukan koleksi file digital favoritmu.</p>
+<button onclick="location.href='/api/auth/google'">LOGIN DENGAN GOOGLE</button>
+<p id="status">Memeriksa status login...</p>
 </section>
 
 <h2>KOLEKSI FILE</h2>
-
 <div class="card">
-  <h3>🎮 Game Collection</h3>
-  <p>Kumpulan file game.</p>
-  <button disabled>🔒 Segera Hadir</button>
+<h3>🎮 Game Collection</h3>
+<p>File PlayStation Pulse - CUSA57220</p>
+<button id="download" disabled>🔒 Memeriksa akses...</button>
 </div>
-
 <div class="card">
-  <h3>📦 Applications</h3>
-  <p>Kumpulan aplikasi.</p>
-  <button disabled>🔒 Segera Hadir</button>
+<h3>📦 Applications</h3>
+<p>Kumpulan aplikasi.</p>
+<button disabled>Segera Hadir</button>
 </div>
-
 <div class="card">
-  <h3>⬇️ Updates</h3>
-  <p>Kumpulan file update.</p>
-  <button disabled>🔒 Segera Hadir</button>
+<h3>⬇️ Updates</h3>
+<p>Kumpulan file update.</p>
+<button disabled>Segera Hadir</button>
 </div>
-
 </main>
+<footer>© 2026 RAIDENS BLOG</footer>
 
-<footer>
-  © 2026 RAIDENS BLOG
-</footer>
+<script>
+async function checkSession(){
+  const status=document.getElementById("status");
+  const button=document.getElementById("download");
 
+  try{
+    const response=await fetch("/api/auth/session",{cache:"no-store"});
+    const data=await response.json();
+
+    if(data.loggedIn && data.subscribed){
+      status.textContent="Login berhasil. Status subscribe terverifikasi.";
+      button.disabled=false;
+      button.textContent="DOWNLOAD FILE";
+      button.onclick=()=>{
+        location.href="/api/download/game";
+      };
+    }else{
+      status.textContent="Login dan subscribe diperlukan untuk membuka download.";
+      button.disabled=true;
+      button.textContent="🔒 TERKUNCI";
+    }
+  }catch(error){
+    status.textContent="Tidak dapat memeriksa login. Coba lagi nanti.";
+  }
+}
+checkSession();
+</script>
 </body>
 </html>
